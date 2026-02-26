@@ -22,8 +22,8 @@ func NewStock(symbol string) (*Stock, error) {
 
 func (s *Stock) Symbol() string { return s.symbol }
 
-func (s *Stock) AddDailyOHLC(date time.Time, high, low, close float64) error {
-	ohlc, err := NewDailyOHLC(s.symbol, date, high, low, close)
+func (s *Stock) AddDailyOHLC(date time.Time, open, high, low, close float64) error {
+	ohlc, err := NewDailyOHLC(s.symbol, date, open, high, low, close)
 	if err != nil {
 		return err
 	}
