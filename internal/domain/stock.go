@@ -1,11 +1,13 @@
 package domain
 
 import (
-	"fmt"
+	"errors"
 	"slices"
 	"strings"
 	"time"
 )
+
+var errSymbolRequired = errors.New("symbol is required")
 
 type Stock struct {
 	symbol     string
@@ -13,21 +15,27 @@ type Stock struct {
 }
 
 func NewStock(symbol string) (*Stock, error) {
-	s := strings.ToUpper(strings.TrimSpace(symbol))
-	if s == "" {
-		return nil, fmt.Errorf("symbol is required")
+	normalizedSymbol := strings.ToUpper(strings.TrimSpace(symbol))
+	if normalizedSymbol == "" {
+		return nil, errSymbolRequired
 	}
-	return &Stock{symbol: s}, nil
+
+	return &Stock{
+		symbol:     normalizedSymbol,
+		dailyOHLCs: nil,
+	}, nil
 }
 
 func (s *Stock) Symbol() string { return s.symbol }
 
-func (s *Stock) AddDailyOHLC(date time.Time, open, high, low, close float64) error {
-	ohlc, err := NewDailyOHLC(s.symbol, date, open, high, low, close)
+func (s *Stock) AddDailyOHLC(date time.Time, open, high, low, closePrice float64) error {
+	ohlc, err := NewDailyOHLC(s.symbol, date, open, high, low, closePrice)
 	if err != nil {
 		return err
 	}
+
 	s.dailyOHLCs = append(s.dailyOHLCs, ohlc)
+
 	return nil
 }
 
